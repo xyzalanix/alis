@@ -1,4 +1,4 @@
-﻿# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
 # and proprietary rights in and to this software, related documentation
@@ -93,9 +93,9 @@ def training_loop(
     D_kwargs                = {},       # Options for discriminator network.
     G_opt_kwargs            = {},       # Options for generator optimizer.
     D_opt_kwargs            = {},       # Options for discriminator optimizer.
-    augment_kwargs          = None,     # Options for augmentation pipeline. None = disable.
+    augment_kwargs          = ada,     # Options for augmentation pipeline. None = disable.
     loss_kwargs             = {},       # Options for loss function.
-    metrics                 = [],       # Metrics to evaluate during training.
+    metrics                 = None,       # Metrics to evaluate during training.
     random_seed             = 0,        # Global random seed.
     num_gpus                = 1,        # Number of GPUs participating in the training.
     rank                    = 0,        # Rank of the current process in [0, num_gpus[.
@@ -111,9 +111,9 @@ def training_loop(
     ada_kimg                = 500,      # ADA adjustment speed, measured in how many kimg it takes for p to increase/decrease by one unit.
     total_kimg              = 25000,    # Total length of the training, measured in thousands of real images.
     kimg_per_tick           = 4,        # Progress snapshot interval.
-    image_snapshot_ticks    = 50,       # How often to save image snapshots? None = disable.
-    network_snapshot_ticks  = 500,      # How often to save network snapshots? None = disable.
-    resume_pkl              = None,     # Network pickle to resume training from.
+    image_snapshot_ticks    = 4,       # How often to save image snapshots? None = disable.
+    network_snapshot_ticks  = 4,      # How often to save network snapshots? None = disable.
+    resume_pkl              = 'https://vision-cair.s3.amazonaws.com/alis/lhq1024-snapshot.pkl',     # Network pickle to resume training from.
     cudnn_benchmark         = True,     # Enable torch.backends.cudnn.benchmark?
     abort_fn                = None,     # Callback function for determining whether to abort training. Must return consistent results across ranks.
     progress_fn             = None,     # Callback function for updating training progress. Called for all ranks.
@@ -420,19 +420,6 @@ def training_loop(
             if rank == 0:
                 with open(snapshot_pkl, 'wb') as f:
                     pickle.dump(snapshot_data, f)
-
-        # Evaluate metrics.
-        if (snapshot_data is not None) and (len(metrics) > 0):
-            if rank == 0:
-                project_name = os.path.basename(os.path.dirname(run_dir))
-                print(f'Evaluating metrics for {project_name} ...')
-            for metric in metrics:
-                result_dict = metric_main.calc_metric(metric=metric, G=snapshot_data['G_ema'],
-                    dataset_kwargs=training_set_kwargs, num_gpus=num_gpus, rank=rank, device=device)
-                if rank == 0:
-                    metric_main.report_metric(result_dict, run_dir=run_dir, snapshot_pkl=snapshot_pkl)
-                stats_metrics.update(result_dict.results)
-        del snapshot_data # conserve memory
 
         # Collect statistics.
         for phase in phases:
