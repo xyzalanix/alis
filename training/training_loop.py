@@ -111,8 +111,8 @@ def training_loop(
     ada_kimg                = 500,      # ADA adjustment speed, measured in how many kimg it takes for p to increase/decrease by one unit.
     total_kimg              = 25000,    # Total length of the training, measured in thousands of real images.
     kimg_per_tick           = 4,        # Progress snapshot interval.
-    image_snapshot_ticks    = 4,       # How often to save image snapshots? None = disable.
-    network_snapshot_ticks  = 4,      # How often to save network snapshots? None = disable.
+    image_snapshot_ticks    = 16,       # How often to save image snapshots? None = disable.
+    network_snapshot_ticks  = 16,      # How often to save network snapshots? None = disable.
     resume_pkl              = 'https://vision-cair.s3.amazonaws.com/alis/lhq1024-snapshot.pkl',     # Network pickle to resume training from.
     cudnn_benchmark         = True,     # Enable torch.backends.cudnn.benchmark?
     abort_fn                = None,     # Callback function for determining whether to abort training. Must return consistent results across ranks.
