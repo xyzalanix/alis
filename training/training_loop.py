@@ -93,7 +93,7 @@ def training_loop(
     D_kwargs                = {},       # Options for discriminator network.
     G_opt_kwargs            = {},       # Options for generator optimizer.
     D_opt_kwargs            = {},       # Options for discriminator optimizer.
-    augment_kwargs          = ada,     # Options for augmentation pipeline. None = disable.
+    augment_kwargs          = {},     # Options for augmentation pipeline. None = disable.
     loss_kwargs             = {},       # Options for loss function.
     metrics                 = None,       # Metrics to evaluate during training.
     random_seed             = 0,        # Global random seed.
