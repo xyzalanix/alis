@@ -28,7 +28,7 @@ project_release_dir:
   experiment_name: ${experiment_name}
 
 train_args:
-  outdir: ${project_release_dir}
+  outdir: "/content/drive/MyDrive/alis/"
   data: ${env.data_dir}/${dataset}.zip
   gpus: ${num_gpus}
   cfg: auto
@@ -37,7 +37,7 @@ train_args:
   snap: 100
 
   # Let's by default have only x flips
-  aug: noaug
+  aug: ada
   mirror: 1
   z_dim: 512
   w_dim: 512
